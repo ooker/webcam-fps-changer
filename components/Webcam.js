@@ -1,6 +1,6 @@
 
 export default {
-  props: ["fps"],
+  props: ["fps", "device"],
   data: function () {
     return { 
       framerate: this.fps,
@@ -8,9 +8,10 @@ export default {
       constraints : null
     }
   },
-  mounted: function () {
-     //*
-    this.constraints = { audio: false, video: { width:1920, height:1080, frameRate: this.fps  } }; 
+  methods : {
+    initCam : function(){
+      //*
+    this.constraints = { audio: false, video: { deviceId:this.device, width:1920, height:1080, frameRate: this.fps  } }; 
     this.video = document.querySelector('video');
     const vm = this;
     
@@ -23,12 +24,20 @@ export default {
     })
     .catch( function(err) { console.log(err.name + ": " + err.message); });
     //*/ 
+    }
+  },
+  mounted() {
+     this.initCam();
    
   },
   watch: { 
     fps: function() { 
-      this.constraints.video.frameRate = this.fps;
-      this.video.srcObject.getVideoTracks()[0].applyConstraints( this.constraints.video );
+      // this.constraints.video.frameRate = this.fps;
+      // this.video.srcObject.getVideoTracks()[0].applyConstraints( this.constraints.video );
+      this.initCam();
+    },
+    device : function(){
+      this.initCam();
     }
   },
   template: `
